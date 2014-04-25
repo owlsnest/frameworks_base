@@ -41,4 +41,8 @@
 
   <!-- Default name of the custom carrier label -->
   <java-symbol type="string" name="default_custom_label" />
+
+  <!-- Battery style -->
+  <java-symbol type="array" name="entries_battery_styles" />
+  <java-symbol type="array" name="values_battery_styles" />
 </resources>
