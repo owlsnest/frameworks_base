@@ -98,6 +98,8 @@ import android.view.animation.PathInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.statusbar.NotificationVisibility;
@@ -105,7 +107,7 @@ import com.android.internal.statusbar.StatusBarIcon;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.ViewMediatorCallback;
-import com.android.systemui.BatteryMeterView;
+import com.android.systemui.BatteryViewManager;
 import com.android.systemui.DemoMode;
 import com.android.systemui.EventLogConstants;
 import com.android.systemui.EventLogTags;
@@ -283,6 +285,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     StatusBarWindowView mStatusBarWindow;
     PhoneStatusBarView mStatusBarView;
+				BatteryViewManager mBatteryViewManager;
     private int mStatusBarWindowState = WINDOW_STATE_SHOWING;
     private StatusBarWindowManager mStatusBarWindowManager;
     private UnlockMethodCache mUnlockMethodCache;
@@ -292,6 +295,18 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     int mPixelFormat;
     Object mQueueLock = new Object();
+
+    // viewgroup containing the normal contents of the statusbar
+    LinearLayout mStatusBarContents;
+
+    // right-hand icons
+    LinearLayout mSystemIconArea;
+    LinearLayout mSystemIcons;
+
+    // left-hand icons
+    LinearLayout mStatusIcons;
+    LinearLayout mStatusIconsKeyguard;
+
 
     StatusBarIconController mIconController;
 
@@ -897,13 +912,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mKeyguardStatusBar.setUserInfoController(mUserInfoController);
         mKeyguardStatusBar.setUserSwitcherController(mUserSwitcherController);
         mUserInfoController.reloadUserInfo();
-
         mHeader.setBatteryController(mBatteryController);
-        ((BatteryMeterView) mStatusBarView.findViewById(R.id.battery)).setBatteryController(
-                mBatteryController);
+        LinearLayout batteryContainer = (LinearLayout) mStatusBarView.findViewById(R.id.battery_container);
+        mBatteryViewManager = new BatteryViewManager(mContext, batteryContainer, mStatusBarView.getBarTransitions(), null);
+        mBatteryViewManager.setBatteryController(mBatteryController);
         mKeyguardStatusBar.setBatteryController(mBatteryController);
         mHeader.setNextAlarmController(mNextAlarmController);
-
         PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
         mBroadcastReceiver.onReceive(mContext,
                 new Intent(pm.isScreenOn() ? Intent.ACTION_SCREEN_ON : Intent.ACTION_SCREEN_OFF));
@@ -3351,7 +3365,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             dispatchDemoCommandToView(command, args, R.id.clock);
         }
         if (modeChange || command.equals(COMMAND_BATTERY)) {
-            dispatchDemoCommandToView(command, args, R.id.battery);
+            View battery = mBatteryViewManager.getCurrentBatteryView();
+         if (battery != null) {
+             dispatchDemoCommandToView(command, args, battery);
+             } 
         }
         if (modeChange || command.equals(COMMAND_STATUS)) {
             mIconController.dispatchDemoCommand(command, args);
@@ -3397,6 +3414,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     }
 
+   private void dispatchDemoCommandToView(String command, Bundle args, View v) {
+       if (mStatusBarView == null) return;
+       if (v instanceof DemoMode) {
+           ((DemoMode)v).dispatchDemoCommand(command, args);
+       }
+    }
     /**
      * @return The {@link StatusBarState} the status bar is in.
      */

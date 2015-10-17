@@ -3463,6 +3463,18 @@ public final class Settings {
         public static final String DOUBLE_TAP_SLEEP_GESTURE = "double_tap_sleep_gesture";
 
         /**
+        * Int value of the battery style 0 is default
+         * @hide
+        */
+        public static final String STATUSBAR_BATTERY_STYLE = "statusbar_battery_style";
+        /**
+         * int value if the battery percent should be shown never/always/expanded
+         *
+         * @hide
+        */
+        public static final String STATUSBAR_BATTERY_PERCENT = "statusbar_battery_percent";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -3514,7 +3526,9 @@ public final class Settings {
             VIBRATE_WHEN_RINGING,
             RINGTONE,
             LOCK_TO_APP_ENABLED,
-            NOTIFICATION_SOUND
+            NOTIFICATION_SOUND,
+            STATUSBAR_BATTERY_STYLE,
+            STATUSBAR_BATTERY_PERCENT
         };
 
         /**
