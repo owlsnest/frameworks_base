@@ -7,6 +7,6 @@
         1: same side as the clock / signal cluster view (old: right)
         2: opposite of the clock / signal cluster view (old: left)
     -->
-    <integer name="config_quick_qs_pulldown">0</integer>
+    <integer name="config_quick_qs_pulldown">2</integer>
 
 </resources>
