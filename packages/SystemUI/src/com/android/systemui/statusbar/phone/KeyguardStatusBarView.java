@@ -34,6 +34,7 @@ import android.widget.TextView;
 
 import com.android.systemui.BatteryViewManager;
 import com.android.systemui.AbstractBatteryView;
+import com.android.keyguard.CarrierText;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.KeyguardUserSwitcher;
@@ -50,7 +51,7 @@ public class KeyguardStatusBarView extends RelativeLayout
 
     private boolean mKeyguardUserSwitcherShowing;
 
-    private TextView mCarrierLabel;
+    private CarrierText mCarrierLabel;
     private View mSystemIconsSuperContainer;
     private MultiUserSwitch mMultiUserSwitch;
     private ImageView mMultiUserAvatar;
@@ -73,7 +74,7 @@ public class KeyguardStatusBarView extends RelativeLayout
         mSystemIconsSuperContainer = findViewById(R.id.system_icons_super_container);
         mMultiUserSwitch = (MultiUserSwitch) findViewById(R.id.multi_user_switch);
         mMultiUserAvatar = (ImageView) findViewById(R.id.multi_user_avatar);
-        mCarrierLabel = (TextView) findViewById(R.id.keyguard_carrier_text);
+        mCarrierLabel = (CarrierText) findViewById(R.id.keyguard_carrier_text);
         loadDimens();
         mFastOutSlowInInterpolator = AnimationUtils.loadInterpolator(getContext(),
                 android.R.interpolator.fast_out_slow_in);
@@ -226,5 +227,18 @@ public class KeyguardStatusBarView extends RelativeLayout
     @Override
     public boolean isExpandedBatteryView() {
         return false;
+    }
+
+    public void updateCarrierLabel() {
+        mCarrierLabel.updateCarrierLabelSettings();
+        mCarrierLabel.updateCarrierText();
+    }
+
+    public void setCarrierLabelVisibility(boolean show) {
+        mCarrierLabel.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    public void updateCarrierLabelColor() {
+        mCarrierLabel.updateColor(false);
     }
 }
